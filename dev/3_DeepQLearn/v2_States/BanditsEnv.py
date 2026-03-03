@@ -19,9 +19,9 @@ class BanditsEnv:
         }
 
     # Get random state
-    def getState(self):
-        self.state_id = random.choice([0, 1])
-        return self.states[self.state_id]
+    def getState(self, probs):
+        self.state_id = random.choices([0, 1], probs)
+        return self.states[self.state_id[0]]
 
     # Execute an action (pull a slot)
     def step(self, action):

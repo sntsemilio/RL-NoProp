@@ -87,7 +87,7 @@ def evaluate(env, policy_fn, steps):
     total_reward = 0.0
     
     for _ in range(steps):
-        state = env.getState()
+        state = env.getState([0.0, 1.0])
         action = policy_fn(state)
         reward = env.step(action)
         total_reward += reward

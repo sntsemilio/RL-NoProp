@@ -17,11 +17,31 @@ def train(env,
           ):
     
     q_history = []
+
+    # Number of periods 
+    n_periods_episodes = 10
+
+    # Number of episodes per period in training
+    n_episodes_per_period = int(episodes / n_periods_episodes)
+
+    # Episodes loop counter
+    episodes_count = 0
+
+    # Current state representation probs
+    current_probs = [0.8, 0.2]
     
     # Training Loop
     for i in range(1, episodes+1):
-        # Get random state ( [1,0,0,0, 0,1,0,0] )
-        state = env.getState() 
+
+        # Change state representation once actual period changes
+        if episodes_count < n_episodes_per_period:
+            # Get random state ( [1,0,0,0, 0,1,0,0] )
+            state = env.getState(current_probs) 
+            episodes_count+=1
+        else:
+            episodes_count = 0
+            current_probs = [current_probs[1], current_probs[0]]
+
 
         # Select action with epsilon-greedy
         if random.random() < epsilon:
