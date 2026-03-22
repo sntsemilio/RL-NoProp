@@ -3,36 +3,60 @@ import torch
 
 
 class BanditsEnv:
-    def __init__(self, slots):
+    def __init__(self, block_size=100):
         """
         slots: list of dicts with keys:
             - 'outcomes'
             - 'probabilities'
         """
-        self.slots = slots
-
-        self.num_actions = len(slots)
+        self.num_actions = 2
+        self.block_size = block_size
 
         self.states = {
-            0: torch.tensor([1,0,0,0, 0,1,0,0], dtype=torch.float32),
-            1: torch.tensor([0,1,0,0, 1,0,0,0], dtype=torch.float32)
+            "AB": torch.tensor([1,0,0,0, 0,1,0,0], dtype=torch.float32),
+            "BA": torch.tensor([0,1,0,0, 1,0,0,0], dtype=torch.float32)
         }
 
-    # Get random state
-    def getState(self, probs):
-        self.state_id = random.choices([0, 1], probs)
-        return self.states[self.state_id[0]]
+        self.current_state_name = "AB"
+        self.counter = 0
 
-    # Execute an action (pull a slot)
+    # Return the current state (AB or BA)
+    def getState(self):
+        # Use the current state
+        state = self.states[self.current_state_name]
+
+        # Count how many steps we have stayed in this state
+        self.counter += 1
+
+        # After block_size steps, switch to the other state
+        if self.counter >= self.block_size:
+            self.counter = 0
+            self.current_state_name = "BA" if self.current_state_name == "AB" else "AB"
+
+        return state
+
+
     def step(self, action):
-        slot = self.slots[action]
-        reward = random.choices(
-                slot["outcomes"],
-                slot["probabilities"]
-            )[0]
+        # The reward depends on:
+        # 1. The current state (AB or BA)
+        # 2. The chosen action (left=0, right=1)
 
-        # No transition
+        if self.current_state_name == "AB":
+            # In AB:
+            # left  -> 80% reward
+            # right -> 20% reward
+            if action == 0:
+                reward = random.choices([100, 0], [0.8, 0.2])[0]
+            else:
+                reward = random.choices([100, 0], [0.2, 0.8])[0]
+
+        else:  # BA
+            # In BA:
+            # left  -> 20% reward
+            # right -> 80% reward
+            if action == 0:
+                reward = random.choices([100, 0], [0.2, 0.8])[0]
+            else:
+                reward = random.choices([100, 0], [0.8, 0.2])[0]
 
         return reward
-
-

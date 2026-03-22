@@ -9,25 +9,15 @@ import matplotlib.pyplot as plt
 
 # -- Config
 BUFFER_CAPACITY = 8000
-
-SLOTS = [
-    {"outcomes": [100, 0], "probabilities": [0.8, 0.2]},
-    {"outcomes": [0, 100], "probabilities": [0.8, 0.2]},
-]
-
 TARGET_UPDATE = 100
-
 BATCH_SIZE = 64
-
 LR = 1e-3
-
 EPISODES = 100000
-
+BLOCK_SIZE = 1000
 
 
 # -- Initialize environment
-ENV = BanditsEnv(SLOTS)
-
+ENV = BanditsEnv(block_size=BLOCK_SIZE)
 
 # -- Initialize online and target network
 # Trainable Net
@@ -45,10 +35,8 @@ targetNet.eval()
 # Set optimizer
 optimizer = torch.optim.Adam(onlineNet.parameters(), lr=LR)
 
-
 # -- Initialize the Replay Buffer
 buffer = ReplayMemory( capacity=BUFFER_CAPACITY )
-
 
 # -- Initialize Epsilon-greedy
 epsilon = 1.0
@@ -72,7 +60,6 @@ q_history = train(
     )
 
 
-
 # ------ Test
 
 def greedy_policy(state):
@@ -85,32 +72,38 @@ def random_policy(_):
 
 def evaluate(env, policy_fn, steps):
     total_reward = 0.0
-    
+    correct = 0
+
     for _ in range(steps):
-        state = env.getState([0.0, 1.0])
+        state = env.getState()
         action = policy_fn(state)
         reward = env.step(action)
+
         total_reward += reward
 
-    return total_reward / steps
+        # Check if action is correct given the state
+        if env.current_state_name == "AB":
+            correct_action = 0  # left
+        else:
+            correct_action = 1  # right
+
+        if action == correct_action:
+            correct += 1
+
+    avg_reward = total_reward / steps
+    accuracy = correct / steps
+
+    return avg_reward, accuracy
 
 def test(steps = 10000):
-
-    # -- Test Slots:
-    slots = [
-        {"outcomes": [100, 0], "probabilities": [0.2, 0.8]},
-        {"outcomes": [0, 100], "probabilities": [0.2, 0.8]},
-    ]
-
     # Create test env
-    test_env = BanditsEnv(slots)
+    test_env = BanditsEnv(block_size=BLOCK_SIZE)
 
-    avg_learned = evaluate(test_env, greedy_policy, steps)
-    avg_random = evaluate(test_env, random_policy, steps)
+    avg_learned, acc_learned = evaluate(test_env, greedy_policy, steps)
+    avg_random, acc_random = evaluate(test_env, random_policy, steps)
 
-    print(f"Average reward (learned): {avg_learned:.3f}")
-    print(f"Average reward (random):  {avg_random:.3f}")
-
+    print(f"Learned -> Reward: {avg_learned:.3f} | Accuracy: {acc_learned:.3f}")
+    print(f"Random  -> Reward: {avg_random:.3f} | Accuracy: {acc_random:.3f}")
 
 test(steps=10000)
 
