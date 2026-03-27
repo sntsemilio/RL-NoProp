@@ -23,19 +23,8 @@ class BanditsEnv:
     # Return the current state (AB or BA)
     def getState(self):
         # Use the current state
-        state = self.states[self.current_state_name]
-
-        # Count how many steps we have stayed in this state
-        self.counter += 1
-
-        # After block_size steps, switch to the other state
-        if self.counter >= self.block_size:
-            self.counter = 0
-            self.current_state_name = "BA" if self.current_state_name == "AB" else "AB"
-
-        return state
-
-
+        return self.states[self.current_state_name]
+        
     def step(self, action):
         # The reward depends on:
         # 1. The current state (AB or BA)
@@ -58,5 +47,13 @@ class BanditsEnv:
                 reward = random.choices([100, 0], [0.2, 0.8])[0]
             else:
                 reward = random.choices([100, 0], [0.8, 0.2])[0]
+
+        # Count how many steps we have stayed in this state
+        self.counter += 1
+
+        # After block_size steps, switch to the other state
+        if self.counter >= self.block_size:
+            self.counter = 0
+            self.current_state_name = "BA" if self.current_state_name == "AB" else "AB"
 
         return reward

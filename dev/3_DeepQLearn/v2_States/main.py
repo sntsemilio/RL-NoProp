@@ -2,10 +2,9 @@ from DQN import DQN
 from BanditsEnv import BanditsEnv
 from ReplayMemory import ReplayMemory
 from TrainingLoop import train
-import torch, random
+import torch, random, datetime
 import numpy as np
 import matplotlib.pyplot as plt
-
 
 # -- Config
 BUFFER_CAPACITY = 8000
@@ -13,8 +12,7 @@ TARGET_UPDATE = 100
 BATCH_SIZE = 64
 LR = 1e-3
 EPISODES = 100000
-BLOCK_SIZE = 1000
-
+BLOCK_SIZE = 5000
 
 # -- Initialize environment
 ENV = BanditsEnv(block_size=BLOCK_SIZE)
@@ -26,42 +24,7 @@ onlineNet = DQN(8, ENV.num_actions)
 # Target Net
 targetNet = DQN(8, ENV.num_actions)
 
-# Load trainable net parameters into target net 
-targetNet.load_state_dict(onlineNet.state_dict())
-
-# Set target net into evaluation mode 
-targetNet.eval()
-
-# Set optimizer
-optimizer = torch.optim.Adam(onlineNet.parameters(), lr=LR)
-
-# -- Initialize the Replay Buffer
-buffer = ReplayMemory( capacity=BUFFER_CAPACITY )
-
-# -- Initialize Epsilon-greedy
-epsilon = 1.0
-epsilon_min = 0.05
-epsilon_decay = 0.995
-
-
-# Execute training loop
-q_history = train(
-        ENV,
-        onlineNet, 
-        targetNet,
-        buffer,
-        EPISODES,
-        optimizer,
-        epsilon,
-        epsilon_min,
-        epsilon_decay,
-        batch_size = BATCH_SIZE,
-        targetNet_update = TARGET_UPDATE
-    )
-
-
-# ------ Test
-
+# ------ Test Functions
 def greedy_policy(state):
     with torch.no_grad():
         q_values = onlineNet(state)
@@ -105,19 +68,65 @@ def test(steps = 10000):
     print(f"Learned -> Reward: {avg_learned:.3f} | Accuracy: {acc_learned:.3f}")
     print(f"Random  -> Reward: {avg_random:.3f} | Accuracy: {acc_random:.3f}")
 
-test(steps=10000)
+
+def main():
+
+    # Load trainable net parameters into target net 
+    targetNet.load_state_dict(onlineNet.state_dict())
+
+    # Set target net into evaluation mode 
+    targetNet.eval()
+
+    # Set optimizer
+    optimizer = torch.optim.Adam(onlineNet.parameters(), lr=LR)
+
+    # -- Initialize the Replay Buffer
+    buffer = ReplayMemory( capacity=BUFFER_CAPACITY )
+
+    # -- Initialize Epsilon-greedy
+    epsilon = 1.0
+    epsilon_min = 0.05
+    epsilon_decay = 0.995
 
 
-# ------ Graphs
-q_history = np.array(q_history)
+    # Execute training loop
+    q_history = train(
+        ENV,
+        onlineNet, 
+        targetNet,
+        buffer,
+        EPISODES,
+        optimizer,
+        epsilon,
+        epsilon_min,
+        epsilon_decay,
+        batch_size = BATCH_SIZE,
+        targetNet_update = TARGET_UPDATE
+    )
 
-plt.figure(figsize=(8, 5))
-for i in range(q_history.shape[1]):
-    plt.plot(q_history[:, i], label=f"Q(slot {i})")
+    test(steps=10000)
 
-plt.xlabel("Training checkpoints")
-plt.ylabel("Q-value")
-plt.title(f"DQN learning on bandit")
-plt.legend()
-plt.tight_layout()
-plt.show()
+    # ------ Graphs
+    q_history = np.array(q_history)
+
+    plt.figure(figsize=(8, 5))
+    for i in range(q_history.shape[1]):
+        plt.plot(q_history[:, i], label=f"Q(slot {i})")
+
+    plt.xlabel("Training checkpoints")
+    plt.ylabel("Q-value")
+    plt.title(f"DQN learning on bandit")
+    plt.legend()
+    plt.tight_layout()
+    plt.show()
+
+
+if __name__ == "__main__":
+    start = datetime.datetime.now()
+    print("\n" + "\033[0;34m" + "[start] " + str(start) + "\033[0m" + "\n");
+    main();
+    end = datetime.datetime.now()
+    print("\n" + "\033[0;34m" + "[end] "+ str(end) + "\033[0m" + "\n");
+
+    exectime= end - start
+    print("Exectime: ",exectime.total_seconds() )
