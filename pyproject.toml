@@ -1,0 +1,19 @@
+[project]
+name = "rl-noprop"
+version = "0.1.0"
+description = "Research prototypes for reinforcement learning, DQN, and NoProp diffusion experiments."
+readme = "README.md"
+requires-python = ">=3.11,<3.13"
+dependencies = [
+    "matplotlib>=3.8",
+    "numpy>=1.26",
+    "torch>=2.5",
+]
+
+[dependency-groups]
+dev = [
+    "ipykernel>=6.29",
+    "jupyterlab>=4.2",
+    "pytest>=8.0",
+    "ruff>=0.8",
+]

@@ -13,3 +13,16 @@ __pycache__/
 *__pycache__
 
 .vscode/
+
+# uv / virtual environments
+.venv/
+.python-version
+
+# Python tooling
+.pytest_cache/
+.ruff_cache/
+.ipynb_checkpoints/
+
+# Research outputs (do not version generated runs by default)
+outputs/
+runs/
