@@ -1,92 +1,96 @@
-from DQN import DQN
-from BanditsEnv import BanditsEnv
-from ReplayMemory import ReplayMemory
-from TrainingLoop import train
-import torch, random
-import numpy as np
-import matplotlib.pyplot as plt
+import random
 
+import matplotlib.pyplot as plt
+import numpy as np
+import torch
+from BanditsEnv import BanditEnvironment
+from DQN import QNetwork
+from ReplayMemory import ReplayBuffer
+from TrainingLoop import train_dqn
 
 # -- Config
-BUFFER_CAPACITY = 1500
+REPLAY_BUFFER_CAPACITY = 1500
 
-# SLOTS = [
-#     {"outcomes": [0, 10], "probabilities": [0.6, 0.4]},
-#     {"outcomes": [0, 100], "probabilities": [0.97, 0.03]},
+# BANDIT_ARMS = [
+#     {"reward_outcomes": [0, 10], "reward_probabilities": [0.6, 0.4]},
+#     {"reward_outcomes": [0, 100], "reward_probabilities": [0.97, 0.03]},
 # ]
 
-SLOTS = [
-    {"outcomes": [100, 0], "probabilities": [0.6, 0.4]},
-    {"outcomes": [0, 100], "probabilities": [0.4, 0.6]}
+BANDIT_ARMS = [
+    {"reward_outcomes": [100, 0], "reward_probabilities": [0.6, 0.4]},
+    {"reward_outcomes": [0, 100], "reward_probabilities": [0.4, 0.6]},
 ]
 
-TARGET_UPDATE = 100
+TARGET_NETWORK_SYNC_INTERVAL = 100
 
 BATCH_SIZE = 32
 
-LR = 1e-3
+LEARNING_RATE = 1e-3
 
-EPISODES = 10000
+NUM_TRAINING_STEPS = 10000
+NUM_EVALUATION_STEPS = 10000
+STATE_DIM = 1
+
+EPSILON_START = 1.0
+EPSILON_END = 0.05
+EPSILON_DECAY = 0.995
 
 
 
 # -- Initialize environment
-ENV = BanditsEnv(SLOTS)
+training_environment = BanditEnvironment(BANDIT_ARMS)
 
 
 # -- Initialize online and target network
-# Trainable Net
-onlineNet = DQN(1, ENV.num_actions)
+# Trainable online Q-network
+online_network = QNetwork(STATE_DIM, training_environment.num_actions)
 
-# Target Net
-targetNet = DQN(1, ENV.num_actions)
+# Target Q-network
+target_network = QNetwork(STATE_DIM, training_environment.num_actions)
 
-# Load trainable net parameters into target net 
-targetNet.load_state_dict(onlineNet.state_dict())
+# Load online-network parameters into the target network.
+target_network.load_state_dict(online_network.state_dict())
 
-# Set target net into evaluation mode 
-targetNet.eval()
+# Set the target network to evaluation mode.
+target_network.eval()
 
 # Set optimizer
-optimizer = torch.optim.Adam(onlineNet.parameters(), lr=LR)
+optimizer = torch.optim.Adam(online_network.parameters(), lr=LEARNING_RATE)
 
 
 # -- Initialize the Replay Buffer
-buffer = ReplayMemory( capacity=BUFFER_CAPACITY )
-
-
-# -- Initialize Epsilon-greedy
-epsilon = 1.0
-epsilon_min = 0.05
-epsilon_decay = 0.995
+replay_buffer = ReplayBuffer(capacity=REPLAY_BUFFER_CAPACITY)
 
 
 # Execute training loop
-q_history = train(
-        ENV,
-        onlineNet, 
-        targetNet,
-        buffer,
-        EPISODES,
-        optimizer,
-        epsilon,
-        epsilon_min,
-        epsilon_decay,
-        batch_size = BATCH_SIZE,
-        targetNet_update = TARGET_UPDATE
-    )
+q_value_history = train_dqn(
+    training_environment,
+    online_network,
+    target_network,
+    replay_buffer,
+    NUM_TRAINING_STEPS,
+    optimizer,
+    EPSILON_START,
+    EPSILON_END,
+    EPSILON_DECAY,
+    batch_size=BATCH_SIZE,
+    target_sync_interval=TARGET_NETWORK_SYNC_INTERVAL,
+)
 
 
 #  Graphs
-q_history = np.array(q_history)
+q_value_history = np.array(q_value_history)
 
 plt.figure(figsize=(8, 5))
-for i in range(q_history.shape[1]):
-    plt.plot(q_history[:, i], label=f"Q(slot {i})")
+for action_index in range(q_value_history.shape[1]):
+    plt.plot(
+        q_value_history[:, action_index],
+        label=f"Q(action {action_index})",
+    )
 
 plt.xlabel("Training checkpoints")
 plt.ylabel("Q-value")
-plt.title(f"DQN learning on bandit")
+plt.title("DQN learning on bandit")
 plt.legend()
 plt.tight_layout()
 plt.show()
@@ -97,38 +101,49 @@ plt.show()
 
 def greedy_policy(state):
     with torch.no_grad():
-        q_values = onlineNet(state)
+        q_values = online_network(state)
         return q_values.argmax(dim=1).item()
 
-def random_policy(_):
-    return random.randint(0, ENV.num_actions - 1)
 
-def evaluate(env, policy_fn, steps=10000):
+def random_policy(_):
+    return random.randint(0, training_environment.num_actions - 1)
+
+
+def evaluate_policy(environment, policy, num_steps=10000):
     total_reward = 0.0
     state = torch.tensor([[1.0]], dtype=torch.float32)
 
-    for _ in range(steps):
-        action = policy_fn(state)
-        reward = env.step(action)
+    for _ in range(num_steps):
+        action = policy(state)
+        reward = environment.step(action)
         total_reward += reward
 
-    return total_reward / steps
+    return total_reward / num_steps
 
-def test(steps = 10000):
 
-    slots = [
-        {"outcomes": [200, 0], "probabilities": [0.8, 0.2]},
-        {"outcomes": [0, 100], "probabilities": [0.2, 0.8]},
+def evaluate_trained_agent(num_steps=NUM_EVALUATION_STEPS):
+
+    evaluation_bandit_arms = [
+        {"reward_outcomes": [200, 0], "reward_probabilities": [0.8, 0.2]},
+        {"reward_outcomes": [0, 100], "reward_probabilities": [0.2, 0.8]},
     ]
 
     # Create test env
-    test_env = BanditsEnv(slots)
+    evaluation_environment = BanditEnvironment(evaluation_bandit_arms)
 
-    avg_learned = evaluate(test_env, greedy_policy, steps)
-    avg_random = evaluate(test_env, random_policy, steps)
+    greedy_mean_reward = evaluate_policy(
+        evaluation_environment,
+        greedy_policy,
+        num_steps,
+    )
+    random_mean_reward = evaluate_policy(
+        evaluation_environment,
+        random_policy,
+        num_steps,
+    )
 
-    print(f"Average reward (learned): {avg_learned:.3f}")
-    print(f"Average reward (random):  {avg_random:.3f}")
+    print(f"Mean reward (greedy policy): {greedy_mean_reward:.3f}")
+    print(f"Mean reward (random policy): {random_mean_reward:.3f}")
 
 
-test(steps=10000)
+evaluate_trained_agent()

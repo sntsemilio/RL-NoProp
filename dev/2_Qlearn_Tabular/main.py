@@ -1,105 +1,113 @@
-import random
 import math
-import matplotlib.pyplot as plt
+import random
 
+import matplotlib.pyplot as plt
 
 # ===========================================================
 # CONSTANTS
 # ===========================================================
-SLOTS = [
-    {"outcomes": [0, 10], "probabilities": [0.6, 0.4]},
-    {"outcomes": [0, 100], "probabilities": [0.97, 0.03]},
+BANDIT_ARMS = [
+    {"reward_outcomes": [0, 10], "reward_probabilities": [0.6, 0.4]},
+    {"reward_outcomes": [0, 100], "reward_probabilities": [0.97, 0.03]},
 ]
 
-NUM_EPISODES = 10000
-NUM_EVAL_STEPS = 5000
+NUM_TRAINING_STEPS = 10000
+NUM_EVALUATION_STEPS = 5000
 
-LEARNING_RATE = 0.01
+STEP_SIZE = 0.01
 
-EPSILON_MAX = 1.0
-EPSILON_MIN = 0.05
-EPSILON_DECAY = 0.001
+EPSILON_START = 1.0
+EPSILON_END = 0.05
+EPSILON_DECAY_RATE = 0.001
 
 
 # ===========================================================
 # ENVIRONMENT
 # ===========================================================
-def pull_slot(slot_id):
-    slot = SLOTS[slot_id]
-    return random.choices(slot["outcomes"], slot["probabilities"])[0]
+def sample_reward(action):
+    arm = BANDIT_ARMS[action]
+    return random.choices(
+        arm["reward_outcomes"],
+        arm["reward_probabilities"],
+    )[0]
 
 
 # ===========================================================
 # Q-LEARNING (TRAINING)
 # ===========================================================
 def train_q_learning():
-    num_slots = len(SLOTS)
-    q_values = [0.0 for _ in range(num_slots)]
-    q_history = [[] for _ in range(num_slots)]
+    num_actions = len(BANDIT_ARMS)
+    q_values = [0.0 for _ in range(num_actions)]
+    q_value_history = [[] for _ in range(num_actions)]
 
-    for episode in range(NUM_EPISODES):
+    for training_step in range(NUM_TRAINING_STEPS):
 
-        epsilon = EPSILON_MIN + (EPSILON_MAX - EPSILON_MIN) * math.exp(-EPSILON_DECAY * episode)
+        epsilon = EPSILON_END + (EPSILON_START - EPSILON_END) * math.exp(
+            -EPSILON_DECAY_RATE * training_step
+        )
 
         # Epsilon-greedy policy
         if random.random() < epsilon:
-            action = random.randint(0, num_slots - 1)
+            action = random.randint(0, num_actions - 1)
         else:
             action = q_values.index(max(q_values))
 
-        reward = pull_slot(action)
+        reward = sample_reward(action)
 
         # Q-learning update
-        q_values[action] += LEARNING_RATE * (reward - q_values[action])
+        q_values[action] += STEP_SIZE * (reward - q_values[action])
 
-        for i in range(num_slots):
-            q_history[i].append(q_values[i])
+        for action_index in range(num_actions):
+            q_value_history[action_index].append(q_values[action_index])
 
-    return q_values, q_history
+    return q_values, q_value_history
 
 
 # ===========================================================
 # POLICY EVALUATION
 # ===========================================================
-def evaluate_policy(policy_fn, num_steps):
+def evaluate_policy(policy, num_steps):
     total_reward = 0.0
     for _ in range(num_steps):
-        action = policy_fn()
-        total_reward += pull_slot(action)
+        action = policy()
+        total_reward += sample_reward(action)
     return total_reward / num_steps
 
 
 # ===========================================================
 # MAIN
 # ===========================================================
-q_values, q_history = train_q_learning()
+q_values, q_value_history = train_q_learning()
 
-# Learned policy (greedy)
-def learned_policy():
+# Greedy policy learned from the final Q-values.
+def greedy_policy():
     return q_values.index(max(q_values))
 
 # Random baseline policy
 def random_policy():
-    return random.randint(0, len(SLOTS) - 1)
+    return random.randint(0, len(BANDIT_ARMS) - 1)
 
-avg_reward_learned = evaluate_policy(learned_policy, NUM_EVAL_STEPS)
-avg_reward_random = evaluate_policy(random_policy, NUM_EVAL_STEPS)
+greedy_mean_reward = evaluate_policy(greedy_policy, NUM_EVALUATION_STEPS)
+random_mean_reward = evaluate_policy(random_policy, NUM_EVALUATION_STEPS)
 
 print("Learned Q-values:", q_values)
-print(f"Average reward (learned policy): {avg_reward_learned:.3f}")
-print(f"Average reward (random policy):  {avg_reward_random:.3f}")
+print(f"Mean reward (greedy policy): {greedy_mean_reward:.3f}")
+print(f"Mean reward (random policy): {random_mean_reward:.3f}")
 
 
 # ===========================================================
 # PLOT Q-VALUES ONLY
 # ===========================================================
 plt.figure(figsize=(8, 5))
-for i in range(len(SLOTS)):
-    plt.plot(q_history[i], label=f"Q(slot {i})")
+for action_index in range(len(BANDIT_ARMS)):
+    plt.plot(
+        q_value_history[action_index],
+        label=f"Q(action {action_index})",
+    )
 
-plt.xlabel("Iterations")
+plt.xlabel("Training steps")
 plt.ylabel("Q-value")
-plt.title("Tabular Q-learning – Slot Machines")
+plt.title("Tabular Q-learning on bandit arms")
 plt.legend()
 plt.tight_layout()
 plt.show()

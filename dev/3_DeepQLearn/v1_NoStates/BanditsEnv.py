@@ -1,26 +1,26 @@
 import random
 
 
-class BanditsEnv:
-    def __init__(self, slots):
+class BanditEnvironment:
+    def __init__(self, bandit_arms):
         """
-        slots: list of dicts with keys:
-            - 'outcomes'
-            - 'probabilities'
+        bandit_arms: list of dictionaries with keys:
+            - 'reward_outcomes'
+            - 'reward_probabilities'
         """
-        self.slots = slots
+        self.bandit_arms = bandit_arms
 
-        self.num_actions = len(slots)
+        self.num_actions = len(bandit_arms)
 
         self.state = [1.0]
 
         
-    # Execute an action (pull a slot)
+    # Execute an action (pull a bandit arm).
     def step(self, action):
-        slot = self.slots[action]
+        arm = self.bandit_arms[action]
         reward = random.choices(
-            slot["outcomes"],
-            slot["probabilities"]
+            arm["reward_outcomes"],
+            arm["reward_probabilities"],
         )[0]
 
         # No transition

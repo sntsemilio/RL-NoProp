@@ -15,14 +15,14 @@ uv sync --all-groups
 No es necesario activar el entorno para ejecutar los experimentos:
 
 ```powershell
-uv run python dev/1_QLearn_Bandits/main.py
+uv run python dev/1_Stateless_ValueEstimation/main.py
 uv run python dev/2_Qlearn_Tabular/main.py
 uv run python dev/3_DeepQLearn/v1_NoStates/main.py
 uv run python dev/3_DeepQLearn/v2_States/main.py
 uv run python dev/4_NoPropDQL/main.py
 ```
 
-Los scripts de entrenamiento abren gráficos de Matplotlib y algunos pueden tardar por el número de episodios configurado. Para trabajar de forma interactiva:
+El primer experimento guarda su gráfico en `dev/1_Stateless_ValueEstimation/bandits.png`. Los demás scripts de entrenamiento abren gráficos de Matplotlib y algunos pueden tardar por el número de episodios configurado. Para trabajar de forma interactiva:
 
 ```powershell
 uv run jupyter lab
@@ -38,12 +38,19 @@ Para activar el entorno manualmente en PowerShell, usa el de este proyecto (no u
 
 | Ruta | Propósito |
 | --- | --- |
-| `dev/1_QLearn_Bandits` | Estimación incremental de la recompensa esperada de dos bandits. |
+| `dev/1_Stateless_ValueEstimation` | Estimación incremental de la recompensa esperada por acción mediante aprendizaje sin estado (stateless learning). |
 | `dev/2_Qlearn_Tabular` | Baseline de Q-learning tabular con exploración epsilon-greedy. |
 | `dev/3_DeepQLearn/v1_NoStates` | DQN para un bandit sin estado informativo. |
 | `dev/3_DeepQLearn/v2_States` | DQN con estado contextual alternante (`AB`/`BA`). |
 | `dev/4_NoPropDQL` | Prototipo NoProp basado en una cadena de difusión y MLPs de denoising. |
 | `docs/RESEARCH.md` | Protocolo de experimentación, comparabilidad y observaciones de la auditoría. |
+| `docs/RL_GLOSSARY.md` | Vocabulario y convención de nombres compartidos por los experimentos 1, 2 y 3. |
+
+## Convención de nombres
+
+Los experimentos 1, 2 y 3 siguen el vocabulario definido en
+[`docs/RL_GLOSSARY.md`](docs/RL_GLOSSARY.md). El prototipo NoProp se mantiene
+sin cambios hasta que se concrete su formulación.
 
 ## Dependencias
 

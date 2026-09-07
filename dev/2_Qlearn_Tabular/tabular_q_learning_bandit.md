@@ -1,5 +1,8 @@
 # Tabular Q-Learning for a Multi-Armed Bandit (Slot Machines)
 
+Code names in this experiment follow the shared
+[RL glossary](../../docs/RL_GLOSSARY.md).
+
 This document explains **how** and **why** tabular Q-learning applies to the multi-armed bandit problem (slot machines).
 
 It demonstrates how the standard Q-learning update rule simplifies under the special conditions of a bandit problem and how this simplified rule is used to learn the expected reward of each action.

@@ -1,132 +1,164 @@
-from DQN import DQN
-from BanditsEnv import BanditsEnv
-from ReplayMemory import ReplayMemory
-from TrainingLoop import train
-import torch, random, datetime
-import numpy as np
+import datetime
+import random
+
 import matplotlib.pyplot as plt
+import numpy as np
+import torch
+from BanditsEnv import BanditEnvironment
+from DQN import QNetwork
+from ReplayMemory import ReplayBuffer
+from TrainingLoop import train_dqn
 
 # -- Config
-BUFFER_CAPACITY = 8000
-TARGET_UPDATE = 100
+REPLAY_BUFFER_CAPACITY = 8000
+TARGET_NETWORK_SYNC_INTERVAL = 100
 BATCH_SIZE = 64
-LR = 1e-3
-EPISODES = 100000
-BLOCK_SIZE = 5000
+LEARNING_RATE = 1e-3
+NUM_TRAINING_STEPS = 100000
+NUM_EVALUATION_STEPS = 10000
+STATE_DURATION_STEPS = 5000
+STATE_DIM = 8
+EPSILON_START = 1.0
+EPSILON_END = 0.05
+EPSILON_DECAY = 0.995
 
 # -- Initialize environment
-ENV = BanditsEnv(block_size=BLOCK_SIZE)
+training_environment = BanditEnvironment(
+    state_duration_steps=STATE_DURATION_STEPS
+)
 
 # -- Initialize online and target network
-# Trainable Net
-onlineNet = DQN(8, ENV.num_actions)
+# Trainable online Q-network
+online_network = QNetwork(STATE_DIM, training_environment.num_actions)
 
-# Target Net
-targetNet = DQN(8, ENV.num_actions)
+# Target Q-network
+target_network = QNetwork(STATE_DIM, training_environment.num_actions)
 
 # ------ Test Functions
 def greedy_policy(state):
     with torch.no_grad():
-        q_values = onlineNet(state)
+        q_values = online_network(state)
         return torch.argmax(q_values).item()
 
+
 def random_policy(_):
-    return random.randint(0, ENV.num_actions - 1)
+    return random.randint(0, training_environment.num_actions - 1)
 
-def evaluate(env, policy_fn, steps):
+
+def evaluate_policy(environment, policy, num_steps):
     total_reward = 0.0
-    correct = 0
+    optimal_action_count = 0
 
-    for _ in range(steps):
-        state = env.getState()
-        action = policy_fn(state)
-        reward = env.step(action)
+    for _ in range(num_steps):
+        state = environment.get_state()
+        action = policy(state)
+        reward = environment.step(action)
 
         total_reward += reward
 
-        # Check if action is correct given the state
-        if env.current_state_name == "AB":
-            correct_action = 0  # left
+        # Check whether the selected action is optimal for the current state.
+        if environment.current_state_key == "AB":
+            optimal_action = 0  # left
         else:
-            correct_action = 1  # right
+            optimal_action = 1  # right
 
-        if action == correct_action:
-            correct += 1
+        if action == optimal_action:
+            optimal_action_count += 1
 
-    avg_reward = total_reward / steps
-    accuracy = correct / steps
+    mean_reward = total_reward / num_steps
+    optimal_action_rate = optimal_action_count / num_steps
 
-    return avg_reward, accuracy
+    return mean_reward, optimal_action_rate
 
-def test(steps = 10000):
+
+def evaluate_trained_agent(num_steps=NUM_EVALUATION_STEPS):
     # Create test env
-    test_env = BanditsEnv(block_size=BLOCK_SIZE)
+    evaluation_environment = BanditEnvironment(
+        state_duration_steps=STATE_DURATION_STEPS
+    )
 
-    avg_learned, acc_learned = evaluate(test_env, greedy_policy, steps)
-    avg_random, acc_random = evaluate(test_env, random_policy, steps)
+    greedy_mean_reward, greedy_optimal_action_rate = evaluate_policy(
+        evaluation_environment,
+        greedy_policy,
+        num_steps,
+    )
+    random_mean_reward, random_optimal_action_rate = evaluate_policy(
+        evaluation_environment,
+        random_policy,
+        num_steps,
+    )
 
-    print(f"Learned -> Reward: {avg_learned:.3f} | Accuracy: {acc_learned:.3f}")
-    print(f"Random  -> Reward: {avg_random:.3f} | Accuracy: {acc_random:.3f}")
+    print(
+        "Greedy policy -> "
+        f"mean reward: {greedy_mean_reward:.3f} | "
+        f"optimal action rate: {greedy_optimal_action_rate:.3f}"
+    )
+    print(
+        "Random policy -> "
+        f"mean reward: {random_mean_reward:.3f} | "
+        f"optimal action rate: {random_optimal_action_rate:.3f}"
+    )
 
 
 def main():
 
-    # Load trainable net parameters into target net 
-    targetNet.load_state_dict(onlineNet.state_dict())
+    # Load online-network parameters into the target network.
+    target_network.load_state_dict(online_network.state_dict())
 
-    # Set target net into evaluation mode 
-    targetNet.eval()
+    # Set the target network to evaluation mode.
+    target_network.eval()
 
     # Set optimizer
-    optimizer = torch.optim.Adam(onlineNet.parameters(), lr=LR)
+    optimizer = torch.optim.Adam(
+        online_network.parameters(),
+        lr=LEARNING_RATE,
+    )
 
     # -- Initialize the Replay Buffer
-    buffer = ReplayMemory( capacity=BUFFER_CAPACITY )
-
-    # -- Initialize Epsilon-greedy
-    epsilon = 1.0
-    epsilon_min = 0.05
-    epsilon_decay = 0.995
+    replay_buffer = ReplayBuffer(capacity=REPLAY_BUFFER_CAPACITY)
 
 
     # Execute training loop
-    q_history = train(
-        ENV,
-        onlineNet, 
-        targetNet,
-        buffer,
-        EPISODES,
+    q_value_history = train_dqn(
+        training_environment,
+        online_network,
+        target_network,
+        replay_buffer,
+        NUM_TRAINING_STEPS,
         optimizer,
-        epsilon,
-        epsilon_min,
-        epsilon_decay,
-        batch_size = BATCH_SIZE,
-        targetNet_update = TARGET_UPDATE
+        EPSILON_START,
+        EPSILON_END,
+        EPSILON_DECAY,
+        batch_size=BATCH_SIZE,
+        target_sync_interval=TARGET_NETWORK_SYNC_INTERVAL,
     )
 
-    test(steps=10000)
+    evaluate_trained_agent()
 
     # ------ Graphs
-    q_history = np.array(q_history)
+    q_value_history = np.array(q_value_history)
 
     plt.figure(figsize=(8, 5))
-    for i in range(q_history.shape[1]):
-        plt.plot(q_history[:, i], label=f"Q(slot {i})")
+    for action_index in range(q_value_history.shape[1]):
+        plt.plot(
+            q_value_history[:, action_index],
+            label=f"Q(action {action_index})",
+        )
 
     plt.xlabel("Training checkpoints")
     plt.ylabel("Q-value")
-    plt.title(f"DQN learning on bandit")
+    plt.title("DQN learning on contextual bandit")
     plt.legend()
     plt.tight_layout()
     plt.show()
 
 
 if __name__ == "__main__":
-    start = datetime.datetime.now()
-    print("\n" + "\033[0;34m" + "[start] " + str(start) + "\033[0m" + "\n");
-    main();
-    end = datetime.datetime.now()
-    print("\n" + "\033[0;34m" + "[end] "+ str(end) + "\033[0m" + "\n");
+    start_time = datetime.datetime.now(datetime.UTC).astimezone()
+    print("\n" + "\033[0;34m" + "[start] " + str(start_time) + "\033[0m" + "\n")
+    main()
+    end_time = datetime.datetime.now(datetime.UTC).astimezone()
+    print("\n" + "\033[0;34m" + "[end] " + str(end_time) + "\033[0m" + "\n")
 
-    exectime= end - start
-    print("Exectime: ",exectime.total_seconds() )
+    execution_time = end_time - start_time
+    print("Execution time: ", execution_time.total_seconds())

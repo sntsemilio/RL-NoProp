@@ -2,21 +2,21 @@ import random
 from collections import deque
 
 
-class ReplayMemory:
+class ReplayBuffer:
 
-    # Initialize que with any desired capacity
+    # Initialize the replay buffer with the requested capacity.
     def __init__(self, capacity):
-        self.buffer = deque(maxlen=capacity)
+        self.transitions = deque(maxlen=capacity)
 
     # Save a transition
     def push(self, transition):
-        self.buffer.append(transition)
+        self.transitions.append(transition)
 
-    # Get a random sample form buffer
+    # Get a random transition batch from the replay buffer.
     def sample(self, batch_size):
-        sample = random.sample(self.buffer, batch_size)
-        return sample
+        sampled_transitions = random.sample(self.transitions, batch_size)
+        return sampled_transitions
 
-    # Get buffer's lenght
+    # Return the number of stored transitions.
     def __len__(self):
-        return len(self.buffer)
+        return len(self.transitions)

@@ -1,5 +1,8 @@
 # Deep Q-Network (DQN) — Algorithm Explained Step by Step
 
+Code names in these experiments follow the shared
+[RL glossary](../../docs/RL_GLOSSARY.md).
+
 ---
 
 ## Step 0. Initialize Everything
