@@ -1,0 +1,71 @@
+{
+  "document": {
+    "path": "dev/4_Noprop_fst_Advance/avances_1.pdf",
+    "sha256": "fee2bd5bde5cad11169dabad1151fcc5edcc39d9f6d4611e32aae1f378b2ceac",
+    "pages": 12
+  },
+  "numeric_reference": {
+    "dtype": "float64",
+    "finite_difference_epsilon": 1e-6,
+    "finite_difference_normalized_tolerance": 1e-5,
+    "ideal_identity_absolute_tolerance": 1e-6,
+    "quadrature_order": 80,
+    "quadrature_validation_order": 160,
+    "quadrature_stability_tolerance": 1e-8
+  },
+  "model": {
+    "num_blocks": 2,
+    "parameters_per_block": 3,
+    "total_parameters": 6,
+    "rho_main": 0.5,
+    "loss_main": "mse",
+    "optimizer": "sgd",
+    "regularization": null,
+    "gradient_clipping": null
+  },
+  "e0": {
+    "status": "passed",
+    "instances": 9,
+    "rho_values": [0.1, 0.5, 0.9],
+    "monte_carlo_M": [1, 8, 32, 128, 512],
+    "monte_carlo_repetitions": 2000
+  },
+  "pilot": {
+    "status": "completed",
+    "instances": [[0.2, 0.8], [0.4, 0.6]],
+    "seeds": 10,
+    "training_observations_per_arm_decision": 512,
+    "validation_rewards_per_arm": 4096,
+    "learning_rate_candidates": [0.001, 0.01, 0.1],
+    "steps": 2000,
+    "batch_size": 64,
+    "initialization": "zeros"
+  },
+  "e1": {
+    "status": "completed_confirmatory",
+    "instances": [[0.3, 0.7], [0.7, 0.3], [0.45, 0.55], [0.55, 0.45], [0.49, 0.51], [0.51, 0.49], [0.05, 0.95], [0.95, 0.05], [0.5, 0.5]],
+    "observations_per_arm": [32, 128, 512, 2048],
+    "seeds": 30,
+    "rho": 0.5,
+    "batch_size": 64,
+    "steps": 2000,
+    "initialization": "zeros",
+    "gaussian_initialization_ablation_std": 0.1,
+    "gaussian_initialization_ablation_status": "configured_not_part_of_confirmatory_e1"
+  },
+  "analysis": {
+    "bootstrap_resamples": 10000,
+    "confidence_level": 0.95,
+    "unit": "complete_seed",
+    "paired_differences": true,
+    "denoiser_calibration": "ECE with 10 fixed equal-width bins on 4096 new joint pairs per arm",
+    "value_calibration": "absolute error against 4096 new Bernoulli rewards per arm independent of inference"
+  },
+  "e2_smoke": {
+    "status": "passed_non_confirmatory",
+    "instances": [[0.3, 0.7], [0.5, 0.5]],
+    "seeds": 2,
+    "T": 128,
+    "M": 8
+  }
+}

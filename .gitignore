@@ -1,28 +1,65 @@
-# General files
-*.zip
-*.vscode
+# Python, environments and editor state
 __pycache__/
-*.jsonl
-*.zip
-*.tar
-*.tar.gz
-*.csv
-
-# Python
-__pycache__/
-*__pycache__
-
-.vscode/
-
-# uv / virtual environments
+*.py[cod]
 .venv/
 .python-version
-
-# Python tooling
 .pytest_cache/
 .ruff_cache/
 .ipynb_checkpoints/
+.vscode/
 
-# Research outputs (do not version generated runs by default)
+# Local runs, checkpoints, logs and machine-specific provenance
+.private/
 outputs/
 runs/
+results/
+checkpoints/
+archive/
+*.log
+*.jsonl
+*.pt
+*.pth
+*.npz
+*.npy
+*.csv
+*.bundle
+*.zip
+*.tar
+*.tar.gz
+dev/2_Qlearn_Tabular/bandits.png
+dev/4_Noprop_fst_Advance/configs/frozen_rates.json
+dev/6_Noprop_Neural/configs/sources.json
+dev/6_Noprop_Neural/configs/n2_frozen.json
+dev/7_Noprop_N2A_N3/configs/sources.json
+dev/7_Noprop_N2A_N3/configs/hardware_selected.json
+dev/7_Noprop_N2A_N3/configs/n3_frozen.json
+
+# Reviewed numerical results; originals remain in local results/ directories.
+!/published_results/
+!/published_results/**/*.csv
+
+# Research documents stay private, including inside publication directories.
+docs/
+documents/
+reports/
+*.md
+!/README.md
+*.[pP][dD][fF]
+*.tex
+*.bib
+*.sty
+*.cls
+*.aux
+*.bbl
+*.blg
+*.fdb_latexmk
+*.fls
+*.synctex.gz
+*.doc
+*.docx
+*.odt
+*.ppt
+*.pptx
+*.odp
+*.rtf
+*.ipynb

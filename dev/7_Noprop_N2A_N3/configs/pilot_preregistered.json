@@ -1,0 +1,49 @@
+{
+  "beta": [
+    1.5,
+    2.5
+  ],
+  "budget_equal": "all six methods x all four rates x ten seeds x four families x two betas x 5000 interactions",
+  "deployed_clock": "per-interaction environment + decision (including averaging/exploration) + buffer insertion and training; excludes initialization, diagnostics, logging and checkpoint I/O",
+  "failed_candidate": "any nonfinite/failure invalidates entire candidate; report all; require at least one valid rate per method",
+  "families": [
+    "linear",
+    "interaction",
+    "sine",
+    "radial"
+  ],
+  "interactions": 5000,
+  "learning_rates": [
+    0.03,
+    0.1,
+    0.3,
+    1.0
+  ],
+  "methods": [
+    "direct",
+    "ensemble",
+    "structured",
+    "flexible",
+    "logistic",
+    "structured_average"
+  ],
+  "pilot_diagnostics": "observed reward only; no oracle outcome summaries used for selection",
+  "seeds": [
+    91000,
+    91001,
+    91002,
+    91003,
+    91004,
+    91005,
+    91006,
+    91007,
+    91008,
+    91009
+  ],
+  "selection": "maximize mean observed cumulative reward / 5000 over all 80 environments per method; ties choose smaller rate; no true means or regret supplied to selector",
+  "selection_checkpoint": 5000,
+  "stage": "N3pilot",
+  "status": "registered_before_any_pilot",
+  "time_budget_rule": "4 times median deployed seconds among the 80 selected-rate DIRECT pilot runs; freeze numerical seconds before N3",
+  "utc": "2026-10-13T16:02:12.933739+00:00"
+}

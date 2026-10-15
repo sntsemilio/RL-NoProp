@@ -1,0 +1,3 @@
+target_block,loss_invariance_abs_error,calls_to_other_during_loss,calls_to_other_during_update,updates_to_other_during_update,other_parameters_unchanged_by_target_update,target_parameters_changed,other_was_deliberately_perturbed
+1,0.0,0,0,0,True,True,True
+2,0.0,0,0,0,True,True,True

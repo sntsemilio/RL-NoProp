@@ -1,0 +1,229 @@
+[
+  {
+    "factor": "rho",
+    "value": 0.1,
+    "sweep_membership": [
+      "rho=0.1"
+    ],
+    "setting": {
+      "rho": 0.1,
+      "M": 32,
+      "U": 1,
+      "T": 10000,
+      "B": 64
+    },
+    "instances": [
+      [
+        0.3,
+        0.7
+      ],
+      [
+        0.49,
+        0.51
+      ]
+    ],
+    "num_seeds": 30
+  },
+  {
+    "factor": "rho",
+    "value": 0.5,
+    "sweep_membership": [
+      "rho=0.5",
+      "M=32",
+      "U=1"
+    ],
+    "setting": {
+      "rho": 0.5,
+      "M": 32,
+      "U": 1,
+      "T": 10000,
+      "B": 64
+    },
+    "instances": [
+      [
+        0.3,
+        0.7
+      ],
+      [
+        0.49,
+        0.51
+      ]
+    ],
+    "num_seeds": 30
+  },
+  {
+    "factor": "rho",
+    "value": 0.9,
+    "sweep_membership": [
+      "rho=0.9"
+    ],
+    "setting": {
+      "rho": 0.9,
+      "M": 32,
+      "U": 1,
+      "T": 10000,
+      "B": 64
+    },
+    "instances": [
+      [
+        0.3,
+        0.7
+      ],
+      [
+        0.49,
+        0.51
+      ]
+    ],
+    "num_seeds": 30
+  },
+  {
+    "factor": "M",
+    "value": 1,
+    "sweep_membership": [
+      "M=1"
+    ],
+    "setting": {
+      "rho": 0.5,
+      "M": 1,
+      "U": 1,
+      "T": 10000,
+      "B": 64
+    },
+    "instances": [
+      [
+        0.3,
+        0.7
+      ],
+      [
+        0.49,
+        0.51
+      ]
+    ],
+    "num_seeds": 30
+  },
+  {
+    "factor": "M",
+    "value": 8,
+    "sweep_membership": [
+      "M=8"
+    ],
+    "setting": {
+      "rho": 0.5,
+      "M": 8,
+      "U": 1,
+      "T": 10000,
+      "B": 64
+    },
+    "instances": [
+      [
+        0.3,
+        0.7
+      ],
+      [
+        0.49,
+        0.51
+      ]
+    ],
+    "num_seeds": 30
+  },
+  {
+    "factor": "M",
+    "value": 128,
+    "sweep_membership": [
+      "M=128"
+    ],
+    "setting": {
+      "rho": 0.5,
+      "M": 128,
+      "U": 1,
+      "T": 10000,
+      "B": 64
+    },
+    "instances": [
+      [
+        0.3,
+        0.7
+      ],
+      [
+        0.49,
+        0.51
+      ]
+    ],
+    "num_seeds": 30
+  },
+  {
+    "factor": "U",
+    "value": 4,
+    "sweep_membership": [
+      "U=4"
+    ],
+    "setting": {
+      "rho": 0.5,
+      "M": 32,
+      "U": 4,
+      "T": 10000,
+      "B": 64
+    },
+    "instances": [
+      [
+        0.3,
+        0.7
+      ],
+      [
+        0.49,
+        0.51
+      ]
+    ],
+    "num_seeds": 30
+  },
+  {
+    "factor": "ablation",
+    "value": "balanced_buffer_by_arm",
+    "sweep_membership": [
+      "ablation=balanced_buffer_by_arm"
+    ],
+    "setting": {
+      "rho": 0.5,
+      "M": 32,
+      "U": 1,
+      "T": 10000,
+      "B": 64
+    },
+    "instances": [
+      [
+        0.3,
+        0.7
+      ],
+      [
+        0.49,
+        0.51
+      ]
+    ],
+    "num_seeds": 30
+  },
+  {
+    "factor": "ablation",
+    "value": "mean_substitute",
+    "sweep_membership": [
+      "ablation=mean_substitute"
+    ],
+    "setting": {
+      "rho": 0.5,
+      "M": 32,
+      "U": 1,
+      "T": 10000,
+      "B": 64
+    },
+    "instances": [
+      [
+        0.3,
+        0.7
+      ],
+      [
+        0.49,
+        0.51
+      ]
+    ],
+    "num_seeds": 30
+  }
+]

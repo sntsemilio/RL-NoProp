@@ -1,0 +1,387 @@
+{
+  "N3": {
+    "beta": 2,
+    "bootstrap_resamples": 10000,
+    "bootstrap_seed": 93001,
+    "checkpoint_primary": 20000,
+    "diagnostic_interactions": [
+      100,
+      1000,
+      5000,
+      20000
+    ],
+    "effect_size": "absolute paired mean, paired SD, standardized dz, fraction of seed differences below zero; family-specific",
+    "equal_time_reproducibility": "wall time horizon varies with load; exact state resumption at same interaction count, not guaranteed identical temporal stopping horizon",
+    "evaluation_contexts": 4096,
+    "families": [
+      "linear",
+      "interaction",
+      "sine",
+      "radial"
+    ],
+    "interactions": 20000,
+    "methods": [
+      "direct",
+      "ensemble",
+      "structured",
+      "flexible",
+      "logistic",
+      "structured_average"
+    ],
+    "primary": "structured minus direct mean regret per interaction; mean four families within complete seed, at T20000 only",
+    "primary_confidence": 0.95,
+    "regimes": [
+      "interactions",
+      "time"
+    ],
+    "secondary": [
+      "structured minus ensemble",
+      "structured minus structured_average",
+      "flexible minus ensemble",
+      "flexible minus structured",
+      "all mean value errors and decision losses at shared held-out contexts",
+      "same-checkpoint composition vs d1/p2/average",
+      "equal-time realized regret/interactions/reward and final readouts"
+    ],
+    "secondary_confidence": 0.95,
+    "secondary_multiplicity": "exploratory pointwise intervals; no simultaneous claims",
+    "seed_unit": "whole seed, all four families paired",
+    "seeds": [
+      92000,
+      92001,
+      92002,
+      92003,
+      92004,
+      92005,
+      92006,
+      92007,
+      92008,
+      92009,
+      92010,
+      92011,
+      92012,
+      92013,
+      92014,
+      92015,
+      92016,
+      92017,
+      92018,
+      92019,
+      92020,
+      92021,
+      92022,
+      92023,
+      92024,
+      92025,
+      92026,
+      92027,
+      92028,
+      92029
+    ],
+    "stage": "N3",
+    "status": "awaits_pilot_and_freeze",
+    "test_checkpoint_selection": "none; predetermined final horizon/time budget",
+    "time_budget": "resolved exclusively from reserved pilot",
+    "time_cap_rule": "if cap reached before time budget, mark censored, no equal-time superiority claim; do not silently shorten or extend",
+    "time_max_interactions": 200000,
+    "utc": "2026-10-13T16:02:12.933739+00:00"
+  },
+  "base": {
+    "architecture": "two hidden layers, width32, ReLU; one-hot action; logistic affine per arm",
+    "batch": 128,
+    "buffer": "all real triples; uniform with replacement",
+    "clipping": null,
+    "dtype": "float32",
+    "environment_pairing": "separate context and potential-reward uniform RNGs, seed/family/beta shared across agents/rates/regimes; only chosen reward revealed",
+    "epsilon": "t**(-0.5), one-based t",
+    "failures": "preserve config, trace, checkpoint and failure; nonfinite candidate disqualified as a whole in pilot, never drop seeds; any confirmatory failure stops inference and retains incomplete grid",
+    "families": [
+      "linear",
+      "interaction",
+      "sine",
+      "radial"
+    ],
+    "initial_buffer": "t1 action0, t2 action1; first update after t2; T-1 total updates",
+    "initialization": "historical core: hidden normal sqrt(2/fan_in), output sqrt(1/fan_in), zero biases",
+    "methods": [
+      "direct",
+      "ensemble",
+      "structured",
+      "flexible",
+      "logistic",
+      "structured_average"
+    ],
+    "momentum": 0,
+    "optimizer": "SGD",
+    "reference_dtype": "float64",
+    "report": "NoProp-RL-Neuronal-Atari-v0.2 section 5.7",
+    "rho": 0.5,
+    "rng": [
+      "contexts",
+      "potential_rewards",
+      "init_per_block",
+      "minibatches",
+      "noise_per_block",
+      "epsilon",
+      "exploration_arm",
+      "tie",
+      "inference_z1",
+      "inference_Bernoulli",
+      "inference_z2",
+      "evaluation"
+    ],
+    "sampler_replicas": 32,
+    "save_every": 500,
+    "shared_weights": "structured and structured_average share initial values and RNG seeds, never objects or buffers",
+    "structured_average": "separate structured learner and buffer; mean of its two base propensities for decisions",
+    "threads": 1,
+    "tolerances": {
+      "dp_residual": 1e-10,
+      "exact_MSE_update": 0,
+      "exact_resume": 0,
+      "probability_roundoff": 1e-14,
+      "quadrature": 1e-08,
+      "quadrature_refined": 1e-11
+    },
+    "updates_per_interaction": 1,
+    "utc": "2026-10-13T16:02:12.933739+00:00",
+    "weight_decay": 0,
+    "workers": 4
+  },
+  "pilot": {
+    "beta": [
+      1.5,
+      2.5
+    ],
+    "budget_equal": "all six methods x all four rates x ten seeds x four families x two betas x 5000 interactions",
+    "deployed_clock": "per-interaction environment + decision (including averaging/exploration) + buffer insertion and training; excludes initialization, diagnostics, logging and checkpoint I/O",
+    "failed_candidate": "any nonfinite/failure invalidates entire candidate; report all; require at least one valid rate per method",
+    "families": [
+      "linear",
+      "interaction",
+      "sine",
+      "radial"
+    ],
+    "interactions": 5000,
+    "learning_rates": [
+      0.03,
+      0.1,
+      0.3,
+      1.0
+    ],
+    "methods": [
+      "direct",
+      "ensemble",
+      "structured",
+      "flexible",
+      "logistic",
+      "structured_average"
+    ],
+    "pilot_diagnostics": "observed reward only; no oracle outcome summaries used for selection",
+    "seeds": [
+      91000,
+      91001,
+      91002,
+      91003,
+      91004,
+      91005,
+      91006,
+      91007,
+      91008,
+      91009
+    ],
+    "selection": "maximize mean observed cumulative reward / 5000 over all 80 environments per method; ties choose smaller rate; no true means or regret supplied to selector",
+    "selection_checkpoint": 5000,
+    "stage": "N3pilot",
+    "status": "registered_before_any_pilot",
+    "time_budget_rule": "4 times median deployed seconds among the 80 selected-rate DIRECT pilot runs; freeze numerical seconds before N3",
+    "utc": "2026-10-13T16:02:12.933739+00:00"
+  },
+  "publication": {
+    "embedded_statuses": "retained as recorded before execution; see status.json for completion",
+    "kind": "scientific_fields_from_private_frozen_original",
+    "omitted": "local provenance, machine inventory, raw artifact paths",
+    "original_sha256": "f6ccb56064fa58691f0436f4f6bd2e207e7508b4a4b395f9ea0def6d6686e6d0"
+  },
+  "scores": [
+    {
+      "completed": 80,
+      "lr": 0.03,
+      "method": "direct",
+      "observed_reward": 0.6839950017631053,
+      "valid": true
+    },
+    {
+      "completed": 80,
+      "lr": 0.1,
+      "method": "direct",
+      "observed_reward": 0.6896750032901764,
+      "valid": true
+    },
+    {
+      "completed": 80,
+      "lr": 0.3,
+      "method": "direct",
+      "observed_reward": 0.6899774990975857,
+      "valid": true
+    },
+    {
+      "completed": 80,
+      "lr": 1.0,
+      "method": "direct",
+      "observed_reward": 0.689209996163845,
+      "valid": true
+    },
+    {
+      "completed": 80,
+      "lr": 0.03,
+      "method": "ensemble",
+      "observed_reward": 0.6830450020730495,
+      "valid": true
+    },
+    {
+      "completed": 80,
+      "lr": 0.1,
+      "method": "ensemble",
+      "observed_reward": 0.6901224978268147,
+      "valid": true
+    },
+    {
+      "completed": 80,
+      "lr": 0.3,
+      "method": "ensemble",
+      "observed_reward": 0.6909524999558926,
+      "valid": true
+    },
+    {
+      "completed": 80,
+      "lr": 1.0,
+      "method": "ensemble",
+      "observed_reward": 0.6896999992430211,
+      "valid": true
+    },
+    {
+      "completed": 80,
+      "lr": 0.03,
+      "method": "structured",
+      "observed_reward": 0.6822774991393089,
+      "valid": true
+    },
+    {
+      "completed": 80,
+      "lr": 0.1,
+      "method": "structured",
+      "observed_reward": 0.6881925016641617,
+      "valid": true
+    },
+    {
+      "completed": 80,
+      "lr": 0.3,
+      "method": "structured",
+      "observed_reward": 0.6893999986350536,
+      "valid": true
+    },
+    {
+      "completed": 80,
+      "lr": 1.0,
+      "method": "structured",
+      "observed_reward": 0.6897025026381016,
+      "valid": true
+    },
+    {
+      "completed": 80,
+      "lr": 0.03,
+      "method": "flexible",
+      "observed_reward": 0.678049998730421,
+      "valid": true
+    },
+    {
+      "completed": 80,
+      "lr": 0.1,
+      "method": "flexible",
+      "observed_reward": 0.6879174984991551,
+      "valid": true
+    },
+    {
+      "completed": 80,
+      "lr": 0.3,
+      "method": "flexible",
+      "observed_reward": 0.690377502143383,
+      "valid": true
+    },
+    {
+      "completed": 80,
+      "lr": 1.0,
+      "method": "flexible",
+      "observed_reward": 0.6899625025689602,
+      "valid": true
+    },
+    {
+      "completed": 80,
+      "lr": 0.03,
+      "method": "logistic",
+      "observed_reward": 0.6314800001680851,
+      "valid": true
+    },
+    {
+      "completed": 80,
+      "lr": 0.1,
+      "method": "logistic",
+      "observed_reward": 0.6335049994289875,
+      "valid": true
+    },
+    {
+      "completed": 80,
+      "lr": 0.3,
+      "method": "logistic",
+      "observed_reward": 0.6356349967420101,
+      "valid": true
+    },
+    {
+      "completed": 80,
+      "lr": 1.0,
+      "method": "logistic",
+      "observed_reward": 0.634230000525713,
+      "valid": true
+    },
+    {
+      "completed": 80,
+      "lr": 0.03,
+      "method": "structured_average",
+      "observed_reward": 0.6836250014603138,
+      "valid": true
+    },
+    {
+      "completed": 80,
+      "lr": 0.1,
+      "method": "structured_average",
+      "observed_reward": 0.6890150025486946,
+      "valid": true
+    },
+    {
+      "completed": 80,
+      "lr": 0.3,
+      "method": "structured_average",
+      "observed_reward": 0.6907374992966652,
+      "valid": true
+    },
+    {
+      "completed": 80,
+      "lr": 1.0,
+      "method": "structured_average",
+      "observed_reward": 0.6898325033485889,
+      "valid": true
+    }
+  ],
+  "selected_rates": {
+    "direct": 0.3,
+    "ensemble": 0.3,
+    "flexible": 0.3,
+    "logistic": 0.3,
+    "structured": 1.0,
+    "structured_average": 0.3
+  },
+  "status": "frozen_before_N3",
+  "time_budget_seconds": 24.707171056390507,
+  "utc": "2026-10-13T20:14:21.887161+00:00"
+}

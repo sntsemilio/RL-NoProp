@@ -1,0 +1,56 @@
+{
+  "Atari_A0_A4": "pending",
+  "E0": "completed",
+  "E1": "completed",
+  "E2": "smoke_only",
+  "E2_confirmatory": "pending",
+  "E3": "pending",
+  "N0": "passed_28_tests",
+  "N2A_inference": "exploratory; original N2 conclusions unchanged",
+  "N4": "pending",
+  "S0_S1": "prepared_not_executed",
+  "S2_S3": "pending",
+  "as_of": "2026-10-14",
+  "campaign_finished_utc": "2026-10-14T01:44:57.901135+00:00",
+  "campaigns": {
+    "N1": {
+      "completed": 1980,
+      "failed": 0,
+      "status": "completed",
+      "total": 1980
+    },
+    "N2": {
+      "completed": 3360,
+      "failed": 0,
+      "status": "completed",
+      "total": 3360
+    },
+    "N2A": {
+      "audit": "passed",
+      "completed": 480,
+      "status": "completed",
+      "total": 480
+    },
+    "N3": {
+      "audit": "passed",
+      "completed": 1440,
+      "status": "completed",
+      "total": 1440
+    },
+    "N3pilot": {
+      "audit": "passed",
+      "completed": 1920,
+      "status": "completed",
+      "total": 1920
+    },
+    "pilot_N2": {
+      "completed": 1680,
+      "failed": 0,
+      "status": "completed",
+      "total": 1680
+    }
+  },
+  "direct_MSE": "structured_mse.d1 is a same-training readout, not an independent fit",
+  "extension_validation": "passed_48_tests",
+  "scope": "numerical tables, figures, scientific configuration extracts; full runs remain local"
+}

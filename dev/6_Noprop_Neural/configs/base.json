@@ -1,0 +1,73 @@
+{
+  "protocol": "NoProp-RL-Neuronal-Atari-v0.2",
+  "rho": 0.5,
+  "hidden_layers": 2,
+  "width": 32,
+  "wide_width": 47,
+  "activation": "relu",
+  "initialization": "normal: hidden sqrt(2/fan_in); output sqrt(1/fan_in); zero biases; independent block seeds",
+  "optimizer": "SGD",
+  "momentum": 0,
+  "weight_decay": 0,
+  "clipping": null,
+  "train_dtype": "float32",
+  "reference_dtype": "float64",
+  "batch": 128,
+  "updates": 5000,
+  "checkpoint_steps": [
+    0,
+    500,
+    2000,
+    5000
+  ],
+  "checkpoint_main": 5000,
+  "save_every": 500,
+  "methods": [
+    "logistic",
+    "direct",
+    "wide",
+    "ensemble",
+    "structured",
+    "flexible",
+    "structured_mse"
+  ],
+  "quadrature": {
+    "method": "exact_ReLU_breakpoints_Gauss_Legendre_refinement",
+    "orders": [
+      8,
+      16,
+      32,
+      64,
+      128
+    ],
+    "standard_normal_truncation": 10,
+    "tolerance": 1e-08,
+    "failure": "record failure; stop stage; never relax"
+  },
+  "analysis": {
+    "primary": "mean_context(max_action(abs(value-mu)))",
+    "contrast": "structured - direct; mean four families within seed, by n",
+    "bootstrap": 10000,
+    "bootstrap_seed": 84000,
+    "levels": [
+      0.9875,
+      0.95
+    ],
+    "unit": "complete_seed",
+    "checkpoint": 5000,
+    "missing_nonfinite": "retain and report; no complete-case confirmatory inference",
+    "near_boundary": "true_gap <= 0.1",
+    "calibration": "ECE 10 equal-width bins; independent observed rewards",
+    "local_excess_contexts": 256,
+    "local_excess": "FP64 integrated KL and half squared posterior error; first 256 held-out contexts, both actions",
+    "error_quantiles": [
+      0.5,
+      0.9,
+      0.95,
+      0.99
+    ],
+    "secondary": "value excess BCE/MSE, best-action classification, decision regret, calibration, boundary, local excess, error correlation, kappa, timings",
+    "ties": "half-error expected uniform tie breaking",
+    "attribution": "same checkpoint d1,d2,probability average; independent ensemble; separate training costs"
+  }
+}

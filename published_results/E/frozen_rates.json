@@ -1,0 +1,48 @@
+{
+  "batch_size": 64,
+  "candidate_rates": [
+    0.001,
+    0.01,
+    0.1
+  ],
+  "criterion": "mean across pilot seeds and instances of maximum arm-wise absolute error against independent 4096-reward validation means",
+  "frozen_at_utc": "2026-09-11T18:38:03.894396+00:00",
+  "pilot_instances": [
+    [
+      0.2,
+      0.8
+    ],
+    [
+      0.4,
+      0.6
+    ]
+  ],
+  "pilot_seeds": [
+    21000,
+    21001,
+    21002,
+    21003,
+    21004,
+    21005,
+    21006,
+    21007,
+    21008,
+    21009
+  ],
+  "pilot_training_observations_per_arm": 512,
+  "publication": {
+    "embedded_statuses": "retained as recorded before execution; see status.json for completion",
+    "kind": "scientific_fields_from_private_frozen_original",
+    "omitted": "local provenance, machine inventory, raw artifact paths",
+    "original_sha256": "cd66aa3d2d2cb26a10414460c0b8c9445e72de4f65ec49dc99bb1715deebb3f8"
+  },
+  "rates": {
+    "bce": 0.1,
+    "mse": 0.1
+  },
+  "rho": 0.5,
+  "status": "frozen_before_e1",
+  "steps_per_fit": 2000,
+  "true_means_used_for_selection": false,
+  "validation_rewards_per_arm": 4096
+}

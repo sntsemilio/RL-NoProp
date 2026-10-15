@@ -1,0 +1,214 @@
+{
+  "N2": {
+    "beta": 2,
+    "families": [
+      "linear",
+      "interaction",
+      "sine",
+      "radial"
+    ],
+    "seeds": [
+      85000,
+      85001,
+      85002,
+      85003,
+      85004,
+      85005,
+      85006,
+      85007,
+      85008,
+      85009,
+      85010,
+      85011,
+      85012,
+      85013,
+      85014,
+      85015,
+      85016,
+      85017,
+      85018,
+      85019,
+      85020,
+      85021,
+      85022,
+      85023,
+      85024,
+      85025,
+      85026,
+      85027,
+      85028,
+      85029
+    ],
+    "stage": "N2",
+    "status": "requires_successful_N0_N1_pilot_and_frozen_protocol",
+    "test_contexts": 4096,
+    "train_triplets": [
+      128,
+      512,
+      2048,
+      8192
+    ],
+    "validation_triplets": 4096
+  },
+  "base": {
+    "activation": "relu",
+    "analysis": {
+      "attribution": "same checkpoint d1,d2,probability average; independent ensemble; separate training costs",
+      "bootstrap": 10000,
+      "bootstrap_seed": 84000,
+      "calibration": "ECE 10 equal-width bins; independent observed rewards",
+      "checkpoint": 5000,
+      "contrast": "structured - direct; mean four families within seed, by n",
+      "error_quantiles": [
+        0.5,
+        0.9,
+        0.95,
+        0.99
+      ],
+      "levels": [
+        0.9875,
+        0.95
+      ],
+      "local_excess": "FP64 integrated KL and half squared posterior error; first 256 held-out contexts, both actions",
+      "local_excess_contexts": 256,
+      "missing_nonfinite": "retain and report; no complete-case confirmatory inference",
+      "near_boundary": "true_gap <= 0.1",
+      "primary": "mean_context(max_action(abs(value-mu)))",
+      "secondary": "value excess BCE/MSE, best-action classification, decision regret, calibration, boundary, local excess, error correlation, kappa, timings",
+      "ties": "half-error expected uniform tie breaking",
+      "unit": "complete_seed"
+    },
+    "batch": 128,
+    "checkpoint_main": 5000,
+    "checkpoint_steps": [
+      0,
+      500,
+      2000,
+      5000
+    ],
+    "clipping": null,
+    "hidden_layers": 2,
+    "initialization": "normal: hidden sqrt(2/fan_in); output sqrt(1/fan_in); zero biases; independent block seeds",
+    "methods": [
+      "logistic",
+      "direct",
+      "wide",
+      "ensemble",
+      "structured",
+      "flexible",
+      "structured_mse"
+    ],
+    "momentum": 0,
+    "optimizer": "SGD",
+    "protocol": "NoProp-RL-Neuronal-Atari-v0.2",
+    "quadrature": {
+      "failure": "record failure; stop stage; never relax",
+      "method": "exact_ReLU_breakpoints_Gauss_Legendre_refinement",
+      "orders": [
+        8,
+        16,
+        32,
+        64,
+        128
+      ],
+      "standard_normal_truncation": 10,
+      "tolerance": 1e-08
+    },
+    "reference_dtype": "float64",
+    "rho": 0.5,
+    "save_every": 500,
+    "train_dtype": "float32",
+    "updates": 5000,
+    "weight_decay": 0,
+    "wide_width": 47,
+    "width": 32
+  },
+  "pilot": {
+    "beta": [
+      1.5,
+      2.5
+    ],
+    "families": [
+      "linear",
+      "interaction",
+      "sine",
+      "radial"
+    ],
+    "learning_rates": [
+      0.001,
+      0.01,
+      0.1
+    ],
+    "seeds": [
+      83000,
+      83001,
+      83002,
+      83003,
+      83004,
+      83005,
+      83006,
+      83007,
+      83008,
+      83009
+    ],
+    "selection": "mean validation value BCE across all 80 environments per method; ties choose smaller lr; no true means; no test generation",
+    "stage": "pilot",
+    "train_triplets": 2048,
+    "validation_triplets": 4096
+  },
+  "publication": {
+    "embedded_statuses": "retained as recorded before execution; see status.json for completion",
+    "kind": "scientific_fields_from_private_frozen_original",
+    "omitted": "local provenance, machine inventory, raw artifact paths",
+    "original_sha256": "f3d9d462374c474682a4c9aff96dee920c941bd520563583868b85cae99a4a52"
+  },
+  "selected_rates": {
+    "direct": 0.1,
+    "ensemble": 0.1,
+    "flexible": 0.1,
+    "logistic": 0.1,
+    "structured": 0.1,
+    "structured_mse": 0.1,
+    "wide": 0.1
+  },
+  "selection_bce": {
+    "direct": {
+      "0.001": 0.6337213074320855,
+      "0.01": 0.5726997976797593,
+      "0.1": 0.5695193018640955
+    },
+    "ensemble": {
+      "0.001": 0.6355410537199417,
+      "0.01": 0.5721703708548771,
+      "0.1": 0.5684967830374591
+    },
+    "flexible": {
+      "0.001": 0.6586182731990476,
+      "0.01": 0.5838455234566531,
+      "0.1": 0.567032664760126
+    },
+    "logistic": {
+      "0.001": 0.6715264130739996,
+      "0.01": 0.6296840711766449,
+      "0.1": 0.6269631868089401
+    },
+    "structured": {
+      "0.001": 0.6434720914552237,
+      "0.01": 0.5749925276767135,
+      "0.1": 0.5688792575346517
+    },
+    "structured_mse": {
+      "0.001": 0.6774843379701799,
+      "0.01": 0.6164490149142725,
+      "0.1": 0.5687978753331107
+    },
+    "wide": {
+      "0.001": 0.6252135138465841,
+      "0.01": 0.5708635598440605,
+      "0.1": 0.5697058602752433
+    }
+  },
+  "selection_rule": "all 80 validation environments; smallest mean value BCE; no expansion of predeclared grid in this first campaign; boundary choices reported",
+  "status": "frozen_before_N2",
+  "utc": "2026-10-12T23:54:55.674863+00:00"
+}

@@ -1,0 +1,179 @@
+{
+  "status": "PENDING_NOT_EXECUTED",
+  "E0": "historical completed",
+  "E1": "historical completed",
+  "E2": "only historical smoke; confirmatory pending",
+  "E3": "pending",
+  "N3": {
+    "T": 20000,
+    "seeds": 30,
+    "epsilon": "t^-0.5",
+    "M": 32,
+    "batch": 128,
+    "updates_per_interaction": 1,
+    "first_update": "after first two real observations",
+    "evaluations": [
+      100,
+      1000,
+      5000,
+      20000
+    ]
+  },
+  "N4": {
+    "families": [
+      "linear",
+      "interaction"
+    ],
+    "seeds": 10,
+    "one_factor_at_a_time": {
+      "rho": [
+        0.1,
+        0.5,
+        0.9
+      ],
+      "M": [
+        1,
+        8,
+        32,
+        128
+      ],
+      "width": [
+        16,
+        32,
+        64
+      ],
+      "updates": [
+        1,
+        4
+      ]
+    },
+    "other": [
+      "balanced buffer",
+      "initialization",
+      "MSE",
+      "ideal hybrids",
+      "mean substitute",
+      "six distractors",
+      "out of support"
+    ]
+  },
+  "S0": {
+    "states": 5,
+    "initial_state": 2,
+    "terminals": [
+      0,
+      4
+    ],
+    "slip": 0.1,
+    "terminal_rewards": [
+      -1,
+      1
+    ],
+    "gamma": 0.95,
+    "policy": "uniform",
+    "episodes": 1000,
+    "seeds": 30,
+    "atoms": 51,
+    "support": [
+      -1,
+      1
+    ]
+  },
+  "S1": {
+    "transitions": 10000,
+    "coverage": "uniform over 6 interior state-action pairs",
+    "targets": "frozen"
+  },
+  "S2": {
+    "interactions": 50000,
+    "seeds": 30,
+    "batch": 64,
+    "target_copy_steps": 250
+  },
+  "S3": {
+    "dynamics": "same as S0",
+    "visual_layout": "pending freeze"
+  },
+  "A0": {
+    "games": [
+      "Pong",
+      "Breakout"
+    ],
+    "decisions": 10000,
+    "seeds": 2
+  },
+  "A1": {
+    "frames": 400000,
+    "seeds": 3,
+    "input": "RAM"
+  },
+  "A2": {
+    "games": [
+      "Pong",
+      "Breakout",
+      "SpaceInvaders"
+    ],
+    "seeds": 3,
+    "frames_per_candidate": 500000,
+    "rates": [
+      0.0001,
+      0.0003,
+      0.001
+    ]
+  },
+  "A3": {
+    "auto_launch": false,
+    "requires": "specific measured budget and later authorization",
+    "frames_total": 1200000000,
+    "games": [
+      "Pong",
+      "Breakout",
+      "SpaceInvaders",
+      "Qbert",
+      "Seaquest",
+      "Freeway"
+    ],
+    "seeds": 10,
+    "frames_per_run": 5000000,
+    "base_frameskip": 1,
+    "action_repeat": 4,
+    "sticky": 0.25,
+    "grayscale_size": [
+      84,
+      84
+    ],
+    "stack": 4,
+    "life_loss_terminal": false,
+    "noop_reset": [
+      0,
+      30
+    ],
+    "episode_limit_frames": 108000,
+    "rho": [
+      0,
+      0.5
+    ],
+    "atoms": 51,
+    "support": [
+      -100,
+      100
+    ],
+    "code_divisor": 100,
+    "M_action": 8,
+    "M_target": 16,
+    "gamma": 0.99,
+    "batch": 32,
+    "replay": 100000,
+    "warmup_decisions": 20000,
+    "update_every_decisions": 4,
+    "target_copy_steps": 2500,
+    "optimizer": "local Adam",
+    "epsilon": "1 -> .05 over 250000 decisions",
+    "evaluation_every_frames": 500000,
+    "evaluation_episodes": 20,
+    "epsilon_eval": 0.001
+  },
+  "A4": {
+    "status": "pending predefined ablative budgets"
+  }
+}

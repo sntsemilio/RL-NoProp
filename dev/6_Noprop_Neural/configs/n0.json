@@ -1,0 +1,15 @@
+{
+  "finite_difference_epsilon": 1e-06,
+  "gradient_normalized_tolerance": 1e-05,
+  "relu_min_margin": 0.0001,
+  "identity_tolerance": 1e-07,
+  "quadrature_tolerance": 1e-08,
+  "mc_standard_errors": 6,
+  "mc_samples": 100000,
+  "resume": "bitwise equality CPU same versions; CUDA separately checked if selected",
+  "seeds": [
+    81000,
+    81001,
+    81002
+  ]
+}

@@ -1,0 +1,26 @@
+{
+  "N2A": {
+    "expected": 480,
+    "max_recomputed_metric_difference": 0.0,
+    "stage": "N2A",
+    "status": "passed",
+    "utc": "2026-10-13T18:55:42.680682+00:00",
+    "verified": 480
+  },
+  "N3": {
+    "expected": 1440,
+    "max_recomputed_metric_difference": 0.0,
+    "stage": "N3",
+    "status": "passed",
+    "utc": "2026-10-14T01:44:15.895484+00:00",
+    "verified": 1440
+  },
+  "N3pilot": {
+    "expected": 1920,
+    "max_recomputed_metric_difference": 0.0,
+    "stage": "N3pilot",
+    "status": "passed",
+    "utc": "2026-10-13T20:14:31.105157+00:00",
+    "verified": 1920
+  }
+}

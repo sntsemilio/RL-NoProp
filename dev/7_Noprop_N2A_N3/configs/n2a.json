@@ -1,0 +1,76 @@
+{
+  "batch": 128,
+  "bootstrap": 10000,
+  "bootstrap_seed": 93000,
+  "contrasts": [
+    "S/MSE minus d1/p2/average/ensemble_MSE",
+    "S/BCE minus d1/p2/average/direct/ensemble",
+    "F/BCE minus ensemble/BCE",
+    "d1_S/MSE minus d1_S/BCE",
+    "ensemble_MSE minus ensemble_BCE"
+  ],
+  "direct_mse": "structured_mse.d1, conditional on exact update equivalence",
+  "families": [
+    "linear",
+    "interaction",
+    "sine",
+    "radial"
+  ],
+  "intervals": [
+    0.95
+  ],
+  "lr": 0.1,
+  "lr_status": "fixed_historical_protocol_not_optimized",
+  "metrics": [
+    "primary",
+    "regret",
+    "classification_error",
+    "value_excess_bce",
+    "value_excess_mse"
+  ],
+  "n": [
+    128,
+    512,
+    2048,
+    8192
+  ],
+  "new_method": "ensemble_mse",
+  "seeds": [
+    85000,
+    85001,
+    85002,
+    85003,
+    85004,
+    85005,
+    85006,
+    85007,
+    85008,
+    85009,
+    85010,
+    85011,
+    85012,
+    85013,
+    85014,
+    85015,
+    85016,
+    85017,
+    85018,
+    85019,
+    85020,
+    85021,
+    85022,
+    85023,
+    85024,
+    85025,
+    85026,
+    85027,
+    85028,
+    85029
+  ],
+  "stage": "N2A",
+  "status": "exploratory_post_N2",
+  "ties": "expected uniform tie breaking; retain tie flag and argmax diagnostic",
+  "unit": "whole seed; average all four families, with separate per-family estimates",
+  "updates": 5000,
+  "utc": "2026-10-13T16:02:12.933739+00:00"
+}

@@ -1,0 +1,33 @@
+{
+  "stage": "pilot",
+  "families": [
+    "linear",
+    "interaction",
+    "sine",
+    "radial"
+  ],
+  "beta": [
+    1.5,
+    2.5
+  ],
+  "seeds": [
+    83000,
+    83001,
+    83002,
+    83003,
+    83004,
+    83005,
+    83006,
+    83007,
+    83008,
+    83009
+  ],
+  "train_triplets": 2048,
+  "validation_triplets": 4096,
+  "learning_rates": [
+    0.001,
+    0.01,
+    0.1
+  ],
+  "selection": "mean validation value BCE across all 80 environments per method; ties choose smaller lr; no true means; no test generation"
+}

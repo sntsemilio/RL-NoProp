@@ -1,0 +1,62 @@
+{
+  "architecture": "two hidden layers, width32, ReLU; one-hot action; logistic affine per arm",
+  "batch": 128,
+  "buffer": "all real triples; uniform with replacement",
+  "clipping": null,
+  "dtype": "float32",
+  "environment_pairing": "separate context and potential-reward uniform RNGs, seed/family/beta shared across agents/rates/regimes; only chosen reward revealed",
+  "epsilon": "t**(-0.5), one-based t",
+  "failures": "preserve config, trace, checkpoint and failure; nonfinite candidate disqualified as a whole in pilot, never drop seeds; any confirmatory failure stops inference and retains incomplete grid",
+  "families": [
+    "linear",
+    "interaction",
+    "sine",
+    "radial"
+  ],
+  "initial_buffer": "t1 action0, t2 action1; first update after t2; T-1 total updates",
+  "initialization": "historical core: hidden normal sqrt(2/fan_in), output sqrt(1/fan_in), zero biases",
+  "methods": [
+    "direct",
+    "ensemble",
+    "structured",
+    "flexible",
+    "logistic",
+    "structured_average"
+  ],
+  "momentum": 0,
+  "optimizer": "SGD",
+  "reference_dtype": "float64",
+  "report": "NoProp-RL-Neuronal-Atari-v0.2 section 5.7",
+  "rho": 0.5,
+  "rng": [
+    "contexts",
+    "potential_rewards",
+    "init_per_block",
+    "minibatches",
+    "noise_per_block",
+    "epsilon",
+    "exploration_arm",
+    "tie",
+    "inference_z1",
+    "inference_Bernoulli",
+    "inference_z2",
+    "evaluation"
+  ],
+  "sampler_replicas": 32,
+  "save_every": 500,
+  "shared_weights": "structured and structured_average share initial values and RNG seeds, never objects or buffers",
+  "structured_average": "separate structured learner and buffer; mean of its two base propensities for decisions",
+  "threads": 1,
+  "tolerances": {
+    "dp_residual": 1e-10,
+    "exact_MSE_update": 0,
+    "exact_resume": 0,
+    "probability_roundoff": 1e-14,
+    "quadrature": 1e-08,
+    "quadrature_refined": 1e-11
+  },
+  "updates_per_interaction": 1,
+  "utc": "2026-10-13T16:02:12.933739+00:00",
+  "weight_decay": 0,
+  "workers": 4
+}

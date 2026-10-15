@@ -1,6 +1,10 @@
 import math
 import random
+from pathlib import Path
 
+import matplotlib
+
+matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 
 # ===========================================================
@@ -12,7 +16,7 @@ BANDIT_ARMS = [
 ]
 
 NUM_TRAINING_STEPS = 10000
-NUM_EVALUATION_STEPS = 5000
+NUM_EVALUATION_STEPS = 10000
 
 STEP_SIZE = 0.01
 
@@ -110,4 +114,7 @@ plt.ylabel("Q-value")
 plt.title("Tabular Q-learning on bandit arms")
 plt.legend()
 plt.tight_layout()
-plt.show()
+output_path = Path(__file__).resolve().with_name("bandits.png")
+plt.savefig(output_path, dpi=150, bbox_inches="tight")
+plt.close()
+print(f"Graph saved to: {output_path}")
